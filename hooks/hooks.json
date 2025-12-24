@@ -1,17 +1,130 @@
 {
-  "description": "Strict migration audit hooks - enforces implementation quality before testing",
+  "description": "Strict migration enforcement hooks - blocks actions that violate workflow rules",
   "hooks": {
     "PreToolUse": [
       {
         "matcher": {
           "tool_name": "Bash",
-          "input_contains": ["npm test", "pytest", "mvn test", "yarn test", "pnpm test"]
+          "input_contains": ["npm test", "pytest", "mvn test", "yarn test", "pnpm test", "cargo test", "go test"]
         },
         "hooks": [
           {
             "type": "command",
-            "command": "echo '[AUDIT HOOK] Test command detected - implementation audit required before testing'",
-            "timeout": 5
+            "command": "bash scripts/gate-check.sh pre-test",
+            "timeout": 30000,
+            "onError": "Test execution blocked - pre-test gate failed. Run /audit first."
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["simulation-test-runner"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/gate-check.sh phase2-requires-phase1",
+            "timeout": 10000,
+            "onError": "Phase 2 blocked - Phase 1 static tests must pass first"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["static-test-runner", "test-orchestrator"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/gate-check.sh test-requires-audit",
+            "timeout": 10000,
+            "onError": "Testing blocked - final audit must pass first. Run /audit."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["implementation-auditor"],
+          "output_contains": ["FINAL VERDICT: PASS"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/state-machine.sh pass-gate final_audit_passed && bash scripts/state-machine.sh complete-phase final_audit",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["implementation-auditor"],
+          "output_contains": ["FINAL VERDICT: FAIL"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/state-machine.sh fail-gate final_audit_passed 'Audit failed' && echo '❌ AUDIT FAILED - Fix all violations before proceeding'",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["static-test-runner"],
+          "output_contains": ["Phase 1 Verdict: PASS", "PASS"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/state-machine.sh pass-gate static_tests_passed && bash scripts/state-machine.sh complete-phase phase1_testing && echo '✓ Phase 1 PASSED - Now run Phase 2 simulation tests (REQUIRED)'",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["simulation-test-runner"],
+          "output_contains": ["Phase 2 Verdict: PASS", "PASS"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/state-machine.sh pass-gate simulation_tests_passed && bash scripts/state-machine.sh complete-phase phase2_testing && echo '✓ Phase 2 PASSED - All tests complete'",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["solid-analyzer"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/state-machine.sh complete-phase solid_analysis",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["migration-planner"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/state-machine.sh complete-phase migration_planning",
+            "timeout": 5000
           }
         ]
       }
@@ -21,8 +134,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '[AUDIT HOOK] Task completion detected - final audit checkpoint'",
-            "timeout": 5
+            "command": "bash scripts/gate-check.sh pre-completion 2>/dev/null || echo '[STOP HOOK] ⚠️ Task stopping - verify all gates passed'",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "Notify": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/state-machine.sh status 2>/dev/null || true",
+            "timeout": 5000
           }
         ]
       }

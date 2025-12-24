@@ -1,7 +1,7 @@
 {
   "name": "strict-migration",
-  "version": "1.1.0",
-  "description": "Strict refactoring and migration plugin with MVP/Full enforcement, real user simulation testing, and implementation auditing",
+  "version": "2.0.0",
+  "description": "Strict refactoring and migration plugin with full enforcement system: state machine tracking, gate checkpoints, quality gates, auto-recovery, and mandatory two-phase testing",
   "author": {
     "name": "chanhokim"
   },
@@ -14,6 +14,10 @@
     "audit",
     "strict",
     "no-dummy",
-    "real-testing"
+    "real-testing",
+    "enforcement",
+    "state-machine",
+    "quality-gates",
+    "workflow"
   ]
 }
