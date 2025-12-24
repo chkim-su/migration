@@ -1,40 +1,18 @@
 {
-  "name": "strict-migration",
-  "displayName": "Strict Migration",
-  "description": "Enforces strict implementation standards during refactoring and migration. Prevents dummy code, hardcoding, and scope creep with real user simulation testing.",
-  "version": "1.1.0",
-  "author": "chanhokim",
-  "license": "MIT",
-  "repository": "https://github.com/chkim-su/migration",
-  "homepage": "https://github.com/chkim-su/migration#readme",
-  "bugs": "https://github.com/chkim-su/migration/issues",
-  "categories": [
-    "code-quality",
-    "testing",
-    "refactoring"
-  ],
-  "tags": [
-    "solid",
-    "migration",
-    "audit",
-    "tdd",
-    "strict",
-    "no-dummy"
-  ],
-  "engines": {
-    "claude-code": ">=2.0.0"
+  "name": "strict-migration-marketplace",
+  "owner": {
+    "name": "chanhokim"
   },
-  "commands": [
-    "./commands/migrate.md",
-    "./commands/analyze.md",
-    "./commands/audit.md"
-  ],
-  "agents": [
-    "./agents/solid-analyzer.md",
-    "./agents/migration-planner.md",
-    "./agents/implementation-auditor.md",
-    "./agents/static-test-runner.md",
-    "./agents/simulation-test-runner.md",
-    "./agents/test-orchestrator.md"
+  "plugins": [
+    {
+      "name": "strict-migration",
+      "displayName": "Strict Migration",
+      "description": "Enforces strict implementation standards during refactoring and migration. Prevents dummy code, hardcoding, and scope creep with real user simulation testing.",
+      "version": "1.1.0",
+      "source": "https://github.com/chkim-su/migration",
+      "license": "MIT",
+      "categories": ["code-quality", "testing", "refactoring"],
+      "tags": ["solid", "migration", "audit", "tdd", "strict", "no-dummy"]
+    }
   ]
 }
