@@ -1,7 +1,7 @@
 {
   "name": "strict-migration",
-  "version": "2.1.0",
-  "description": "Strict migration plugin with ACTUAL enforcement: workflow requirement, gate blocking, Phase 2 simulation mandatory, completion verification with evidence files",
+  "version": "2.2.0",
+  "description": "Strict migration plugin with bootstrap requirement: /bootstrap must run first, manual workarounds blocked, enforcement scripts must exist for /migrate to work",
   "author": {
     "name": "chanhokim"
   },

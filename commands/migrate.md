@@ -15,24 +15,70 @@ allowed-tools:
 
 This command enforces strict implementation standards with automated enforcement.
 
-## ⚠️⚠️⚠️ STOP - READ THIS FIRST ⚠️⚠️⚠️
+## ⛔ STOP - MANDATORY CHECK BEFORE ANYTHING ELSE ⛔
+
+```bash
+# YOU MUST RUN THIS COMMAND FIRST - BEFORE ANY OTHER ACTION
+ls scripts/state-machine.sh 2>/dev/null && echo "✓ Enforcement system installed" || echo "❌ STOP: Run /bootstrap first"
+```
+
+### If you see "❌ STOP: Run /bootstrap first":
+
+**DO NOT:**
+- ❌ "I'll follow the principles anyway" → NO ENFORCEMENT
+- ❌ Create manual `.migration/` directory → NOT VALID
+- ❌ Proceed with any migration step → WILL BE BLOCKED
+- ❌ Say "scripts not found, but continuing" → INVALID
+
+**DO:**
+- ✅ Run `/bootstrap` command first
+- ✅ Wait for "BOOTSTRAP COMPLETE" message
+- ✅ Then run `/migrate` again
 
 ```
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║                                                                           ║
-║   BEFORE DOING ANYTHING:                                                  ║
+║   /bootstrap → installs enforcement scripts to this project               ║
+║   /migrate  → runs the enforced migration workflow                        ║
 ║                                                                           ║
-║   1. Check if scripts/ directory exists in the TARGET project             ║
-║   2. If NOT → Run bootstrap FIRST (Step 0.2)                              ║
-║   3. If scripts/ is missing and you proceed anyway → INVALID WORKFLOW     ║
+║   ORDER MATTERS:  /bootstrap  THEN  /migrate                              ║
 ║                                                                           ║
-║   "scripts/ directory not found" = STOP AND BOOTSTRAP                     ║
-║   "I'll follow the principles anyway" = WRONG - NO ENFORCEMENT            ║
+║   Without /bootstrap, /migrate has NO ENFORCEMENT                         ║
+║   Hooks cannot block you if scripts/ doesn't exist                        ║
 ║                                                                           ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 ```
 
-**If scripts/ does not exist, you MUST run bootstrap. Do NOT proceed "following principles" - that has no enforcement.**
+---
+
+## ⚠️ INVALID PATTERNS - DO NOT DO THESE
+
+### ❌ WRONG: Creating manual workarounds
+```bash
+# This will be BLOCKED by hooks:
+mkdir -p .migration
+cat > .migration/state.json << 'EOF'
+...
+EOF
+```
+→ Hook blocks this with: "Manual .migration/ workarounds not allowed"
+
+### ❌ WRONG: Proceeding without enforcement
+```
+"scripts/ directory not found"
+"하지만 워크플로우 원칙을 따라 진행하겠습니다"  ← WRONG
+```
+→ No enforcement means no blocking, no tracking, no gates
+
+### ✅ CORRECT: Run bootstrap first
+```
+"scripts/ directory not found"
+"Bootstrap required. Running /bootstrap..."
+[bootstrap completes]
+"Now running /migrate with enforcement active"
+```
+
+---
 
 ## ⚠️ CRITICAL: ENFORCEMENT SYSTEM ACTIVE
 
