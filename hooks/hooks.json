@@ -1,0 +1,31 @@
+{
+  "description": "Strict migration audit hooks - enforces implementation quality before testing",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": {
+          "tool_name": "Bash",
+          "input_contains": ["npm test", "pytest", "mvn test", "yarn test", "pnpm test"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[AUDIT HOOK] Test command detected - implementation audit required before testing'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[AUDIT HOOK] Task completion detected - final audit checkpoint'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

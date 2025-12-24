@@ -1,0 +1,38 @@
+{
+  "name": "strict-migration",
+  "displayName": "Strict Migration",
+  "description": "Enforces strict implementation standards during refactoring and migration. Prevents dummy code, hardcoding, and scope creep with real user simulation testing.",
+  "version": "1.0.0",
+  "author": "chanhokim",
+  "license": "MIT",
+  "repository": "https://github.com/chanhokim/strict-migration",
+  "homepage": "https://github.com/chanhokim/strict-migration#readme",
+  "bugs": "https://github.com/chanhokim/strict-migration/issues",
+  "categories": [
+    "code-quality",
+    "testing",
+    "refactoring"
+  ],
+  "tags": [
+    "solid",
+    "migration",
+    "audit",
+    "tdd",
+    "strict",
+    "no-dummy"
+  ],
+  "engines": {
+    "claude-code": ">=2.0.0"
+  },
+  "commands": [
+    "./commands/migrate.md",
+    "./commands/analyze.md",
+    "./commands/audit.md"
+  ],
+  "agents": [
+    "./agents/test-executor.md",
+    "./agents/solid-analyzer.md",
+    "./agents/migration-planner.md",
+    "./agents/implementation-auditor.md"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": "strict-migration",
+  "version": "1.0.0",
+  "description": "Strict refactoring and migration plugin with MVP/Full enforcement, real user simulation testing, and implementation auditing",
+  "author": {
+    "name": "chanhokim"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chanhokim/strict-migration"
+  },
+  "keywords": [
+    "solid",
+    "refactoring",
+    "migration",
+    "tdd",
+    "audit",
+    "strict",
+    "no-dummy",
+    "real-testing"
+  ],
+  "components": {
+    "skills": {
+      "solid-design-rules": "SOLID principles and TDD enforcement rules",
+      "strict-implementation-rules": "MVP/Full scope enforcement and anti-dummy rules"
+    },
+    "agents": {
+      "solid-analyzer": "Analyzes code for SOLID violations",
+      "migration-planner": "Plans migration with change containment",
+      "implementation-auditor": "Detects dummy code, hardcoding, and incomplete implementations",
+      "test-executor": "Executes static tests and real user simulation tests"
+    },
+    "commands": {
+      "migrate": "Step-by-step strict migration workflow with MVP/Full enforcement",
+      "analyze": "Quick SOLID and implementation quality analysis",
+      "audit": "Run implementation audit to detect violations"
+    },
+    "hooks": {
+      "pre-test-audit": "Audits implementation before test execution"
+    }
+  }
+}
