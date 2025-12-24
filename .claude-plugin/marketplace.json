@@ -13,7 +13,20 @@
         "repo": "chkim-su/migration"
       },
       "license": "MIT",
-      "tags": ["solid", "migration", "audit", "tdd", "strict", "no-dummy"]
+      "tags": ["solid", "migration", "audit", "tdd", "strict", "no-dummy"],
+      "commands": [
+        "./commands/migrate.md",
+        "./commands/analyze.md",
+        "./commands/audit.md"
+      ],
+      "agents": [
+        "./agents/solid-analyzer.md",
+        "./agents/migration-planner.md",
+        "./agents/implementation-auditor.md",
+        "./agents/static-test-runner.md",
+        "./agents/simulation-test-runner.md",
+        "./agents/test-orchestrator.md"
+      ]
     }
   ]
 }
