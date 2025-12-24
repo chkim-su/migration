@@ -5,9 +5,9 @@
   "version": "1.1.0",
   "author": "chanhokim",
   "license": "MIT",
-  "repository": "https://github.com/chanhokim/strict-migration",
-  "homepage": "https://github.com/chanhokim/strict-migration#readme",
-  "bugs": "https://github.com/chanhokim/strict-migration/issues",
+  "repository": "https://github.com/chkim-su/migration",
+  "homepage": "https://github.com/chkim-su/migration#readme",
+  "bugs": "https://github.com/chkim-su/migration/issues",
   "categories": [
     "code-quality",
     "testing",

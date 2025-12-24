@@ -26,7 +26,7 @@ A Claude Code plugin that enforces strict implementation standards during refact
 ### From GitHub Marketplace
 
 ```bash
-claude plugins install chanhokim/strict-migration
+claude plugins install chkim-su/migration
 ```
 
 ### Manual Installation
@@ -34,7 +34,7 @@ claude plugins install chanhokim/strict-migration
 Clone this repository to your Claude plugins directory:
 
 ```bash
-git clone https://github.com/chanhokim/strict-migration ~/.claude/plugins/local/strict-migration
+git clone https://github.com/chkim-su/migration ~/.claude/plugins/local/strict-migration
 ```
 
 Then enable in settings:
