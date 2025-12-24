@@ -6,12 +6,13 @@
   "plugins": [
     {
       "name": "strict-migration",
-      "displayName": "Strict Migration",
       "description": "Enforces strict implementation standards during refactoring and migration. Prevents dummy code, hardcoding, and scope creep with real user simulation testing.",
       "version": "1.1.0",
-      "source": "https://github.com/chkim-su/migration",
+      "source": {
+        "type": "github",
+        "repo": "chkim-su/migration"
+      },
       "license": "MIT",
-      "categories": ["code-quality", "testing", "refactoring"],
       "tags": ["solid", "migration", "audit", "tdd", "strict", "no-dummy"]
     }
   ]
