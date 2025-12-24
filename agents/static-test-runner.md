@@ -4,8 +4,8 @@ description: Phase 1 test runner for static analysis. Runs syntax validation, ty
 model: sonnet
 skills: ["strict-implementation-rules"]
 allowed-tools: ["Read", "Glob", "Grep", "Bash"]
+tools: ["Read", "Grep", "Glob"]
 ---
-
 # Static Test Runner Agent
 
 You execute Phase 1 static testing. This provides fast feedback before expensive simulation tests.

@@ -4,6 +4,7 @@ model: sonnet
 skills: ["solid-design-rules", "strict-implementation-rules"]
 allowed-tools: ["Read", "Glob", "Grep", "Bash(git:*)"]
 name: migration-planner
+tools: ["Read", "Grep", "Glob"]
 ---
 # Migration Planner Agent
 

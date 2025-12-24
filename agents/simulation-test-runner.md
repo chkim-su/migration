@@ -4,8 +4,8 @@ description: Phase 2 test runner for real user simulation. Executes actual user 
 model: sonnet
 skills: ["strict-implementation-rules"]
 allowed-tools: ["Read", "Glob", "Grep", "Bash", "Write"]
+tools: ["Read", "Grep", "Glob"]
 ---
-
 # Simulation Test Runner Agent
 
 You execute Phase 2 real user simulation testing.

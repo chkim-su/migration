@@ -4,6 +4,7 @@ model: sonnet
 skills: ["solid-design-rules"]
 allowed-tools: ["Read", "Glob", "Grep", "Bash(wc:*)", "Bash(find:*)"]
 name: solid-analyzer
+tools: ["Read", "Grep", "Glob"]
 ---
 # SOLID Analyzer Agent
 

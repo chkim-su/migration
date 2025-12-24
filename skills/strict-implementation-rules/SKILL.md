@@ -1,7 +1,7 @@
 ---
 description: Strict implementation enforcement rules. MVP/Full scope enforcement, anti-dummy rules, and real testing requirements. MUST be referenced during all migration and refactoring work.
+name: strict-implementation-rules
 ---
-
 # Strict Implementation Rules
 
 ## CRITICAL: These rules are NON-NEGOTIABLE

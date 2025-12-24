@@ -4,8 +4,8 @@ description: Orchestrates two-phase testing by coordinating static-test-runner a
 model: sonnet
 skills: ["strict-implementation-rules"]
 allowed-tools: ["Read", "Glob", "Grep", "Bash", "Task"]
+tools: ["Read", "Grep", "Glob"]
 ---
-
 # Test Orchestrator Agent
 
 You coordinate the two-phase testing workflow and generate the final verdict.

@@ -4,6 +4,7 @@ model: sonnet
 skills: ["strict-implementation-rules"]
 allowed-tools: ["Read", "Glob", "Grep", "Bash(wc:*)", "Bash(find:*)"]
 name: implementation-auditor
+tools: ["Read", "Grep", "Glob"]
 ---
 # Implementation Auditor Agent
 

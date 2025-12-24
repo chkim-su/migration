@@ -1,7 +1,7 @@
 ---
 description: SOLID principles and TDD enforcement rules for maintainable software design. Reference when analyzing code quality, planning refactoring, or validating architectural decisions.
+name: solid-design-rules
 ---
-
 # SOLID Design Rules
 
 ## Core Principle

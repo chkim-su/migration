@@ -19,8 +19,8 @@
         "no-dummy"
       ],
       "skills": [
-        "./skills/solid-design-rules.md",
-        "./skills/strict-implementation-rules.md"
+        "./skills/solid-design-rules",
+        "./skills/strict-implementation-rules"
       ],
       "commands": [
         "./commands/migrate.md",
