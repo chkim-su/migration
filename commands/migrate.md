@@ -15,6 +15,25 @@ allowed-tools:
 
 This command enforces strict implementation standards with automated enforcement.
 
+## ⚠️⚠️⚠️ STOP - READ THIS FIRST ⚠️⚠️⚠️
+
+```
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                           ║
+║   BEFORE DOING ANYTHING:                                                  ║
+║                                                                           ║
+║   1. Check if scripts/ directory exists in the TARGET project             ║
+║   2. If NOT → Run bootstrap FIRST (Step 0.2)                              ║
+║   3. If scripts/ is missing and you proceed anyway → INVALID WORKFLOW     ║
+║                                                                           ║
+║   "scripts/ directory not found" = STOP AND BOOTSTRAP                     ║
+║   "I'll follow the principles anyway" = WRONG - NO ENFORCEMENT            ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+```
+
+**If scripts/ does not exist, you MUST run bootstrap. Do NOT proceed "following principles" - that has no enforcement.**
+
 ## ⚠️ CRITICAL: ENFORCEMENT SYSTEM ACTIVE
 
 This migration uses an automated enforcement system:
@@ -24,6 +43,8 @@ This migration uses an automated enforcement system:
 - **Hooks**: Automatically verify and block invalid transitions
 
 **YOU CANNOT SKIP STEPS. THE SYSTEM WILL BLOCK YOU.**
+
+**BUT ONLY IF SCRIPTS ARE INSTALLED. CHECK STEP 0 FIRST.**
 
 ---
 
@@ -110,9 +131,59 @@ This migration uses an automated enforcement system:
 
 ---
 
-## Step 0: Initialize Workflow
+## Step 0: Bootstrap & Initialize
 
-**ALWAYS START HERE**
+**⚠️ CRITICAL: THIS STEP IS MANDATORY - DO NOT SKIP**
+
+### 0.1 Check if enforcement system exists
+
+```bash
+# FIRST: Check if scripts exist in target project
+if [ ! -d "scripts" ] || [ ! -f "scripts/state-machine.sh" ]; then
+    echo "❌ ENFORCEMENT SYSTEM NOT INSTALLED"
+    echo ""
+    echo "You MUST install the enforcement system before proceeding."
+    echo "Run the bootstrap command below."
+    exit 1
+fi
+```
+
+### 0.2 Bootstrap (if scripts/ missing)
+
+**If scripts/ directory does not exist, you MUST run bootstrap first:**
+
+```bash
+# Set the plugin directory path (where strict-migration plugin is installed)
+export STRICT_MIGRATION_PLUGIN_DIR="/path/to/strict-migration"
+
+# Run bootstrap to install enforcement system
+bash "$STRICT_MIGRATION_PLUGIN_DIR/scripts/bootstrap.sh" .
+```
+
+**If you cannot find the plugin directory:**
+1. The plugin is typically at: `~/.claude/plugins/strict-migration/`
+2. Or check Claude Code settings for plugin locations
+3. You can also manually copy the scripts/ directory from the plugin
+
+### 0.3 Verify Installation
+
+```bash
+# Verify all required scripts are present and executable
+for script in state-machine.sh gate-check.sh enforce-workflow.sh progress-tracker.sh quality-gate.sh; do
+    if [ -x "scripts/$script" ]; then
+        echo "✓ $script"
+    else
+        echo "✗ $script MISSING - CANNOT PROCEED"
+        exit 1
+    fi
+done
+```
+
+**⚠️ IF ANY SCRIPT IS MISSING, YOU CANNOT PROCEED WITH MIGRATION**
+
+### 0.4 Initialize State Machine
+
+**Only after bootstrap is complete:**
 
 ```bash
 # Initialize state machine
@@ -130,6 +201,21 @@ Record workflow metadata:
 bash scripts/state-machine.sh set "workflow_id" "\"$(date +%Y%m%d-%H%M%S)\""
 bash scripts/state-machine.sh set "started_at" "\"$(date -Iseconds)\""
 ```
+
+### 0.5 Confirmation Gate
+
+```yaml
+AskUserQuestion:
+  question: "Enforcement system installed and initialized. Ready to proceed?"
+  header: "Bootstrap Complete"
+  options:
+    - label: "Yes - System verified, proceed"
+      description: "All scripts present and state machine initialized"
+    - label: "No - Something is wrong"
+      description: "Need to re-run bootstrap or check installation"
+```
+
+**DO NOT PROCEED TO STEP 1 UNTIL BOOTSTRAP IS COMPLETE**
 
 ---
 
