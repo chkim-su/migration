@@ -14,6 +14,10 @@
       },
       "license": "MIT",
       "tags": ["solid", "migration", "audit", "tdd", "strict", "no-dummy"],
+      "skills": [
+        "./skills/solid-design-rules.md",
+        "./skills/strict-implementation-rules.md"
+      ],
       "commands": [
         "./commands/migrate.md",
         "./commands/analyze.md",
