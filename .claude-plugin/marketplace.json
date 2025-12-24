@@ -8,10 +8,8 @@
       "name": "strict-migration",
       "description": "Enforces strict implementation standards during refactoring and migration. Prevents dummy code, hardcoding, and scope creep with real user simulation testing.",
       "version": "1.1.0",
-      "source": {
-        "type": "github",
-        "repo": "chkim-su/migration"
-      },
+      "source": "github",
+      "repo": "chkim-su/migration",
       "license": "MIT",
       "tags": ["solid", "migration", "audit", "tdd", "strict", "no-dummy"],
       "skills": [
