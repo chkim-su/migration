@@ -1,7 +1,7 @@
 {
   "name": "strict-migration",
-  "version": "2.0.0",
-  "description": "Strict refactoring and migration plugin with full enforcement system: state machine tracking, gate checkpoints, quality gates, auto-recovery, and mandatory two-phase testing",
+  "version": "2.1.0",
+  "description": "Strict migration plugin with ACTUAL enforcement: workflow requirement, gate blocking, Phase 2 simulation mandatory, completion verification with evidence files",
   "author": {
     "name": "chanhokim"
   },
@@ -18,6 +18,8 @@
     "enforcement",
     "state-machine",
     "quality-gates",
-    "workflow"
+    "workflow",
+    "simulation-required",
+    "no-shortcuts"
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "description": "Strict migration enforcement hooks - blocks actions that violate workflow rules",
+  "description": "Strict migration enforcement hooks v2.0 - ACTUALLY BLOCKS invalid actions, not just warns",
   "hooks": {
     "PreToolUse": [
       {
@@ -10,9 +10,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash scripts/gate-check.sh pre-test",
+            "command": "bash scripts/enforce-workflow.sh require-workflow 'test execution' && bash scripts/enforce-workflow.sh require-gate final_audit_passed 'test execution'",
             "timeout": 30000,
-            "onError": "Test execution blocked - pre-test gate failed. Run /audit first."
+            "onError": "❌ BLOCKED: Cannot run tests. Either workflow not initialized or final audit not passed. Run /migrate first, then pass final audit."
           }
         ]
       },
@@ -24,9 +24,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash scripts/gate-check.sh phase2-requires-phase1",
+            "command": "bash scripts/enforce-workflow.sh require-workflow 'Phase 2 simulation tests' && bash scripts/enforce-workflow.sh require-gate static_tests_passed 'Phase 2 simulation tests'",
             "timeout": 10000,
-            "onError": "Phase 2 blocked - Phase 1 static tests must pass first"
+            "onError": "❌ BLOCKED: Phase 2 simulation tests require Phase 1 static tests to pass first. Complete static-test-runner before simulation-test-runner."
           }
         ]
       },
@@ -38,9 +38,77 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash scripts/gate-check.sh test-requires-audit",
+            "command": "bash scripts/enforce-workflow.sh require-workflow 'test runner' && bash scripts/enforce-workflow.sh require-gate final_audit_passed 'test execution'",
             "timeout": 10000,
-            "onError": "Testing blocked - final audit must pass first. Run /audit."
+            "onError": "❌ BLOCKED: Test runner requires final audit to pass first. Run implementation-auditor and get PASS verdict."
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["implementation-auditor"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/enforce-workflow.sh require-workflow 'implementation audit'",
+            "timeout": 10000,
+            "onError": "❌ BLOCKED: Audit requires active workflow. Run /migrate to initialize."
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["solid-analyzer"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/enforce-workflow.sh require-workflow 'SOLID analysis' && bash scripts/enforce-workflow.sh require-gate scope_confirmed 'SOLID analysis'",
+            "timeout": 10000,
+            "onError": "❌ BLOCKED: SOLID analysis requires confirmed scope. Complete scope definition first."
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["migration-planner"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/enforce-workflow.sh require-workflow 'migration planning'",
+            "timeout": 10000,
+            "onError": "❌ BLOCKED: Migration planning requires active workflow. Run /migrate first."
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Write",
+          "input_contains": ["/src/", "/lib/", "/app/", ".py", ".ts", ".js", ".java", ".go", ".rs"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/enforce-workflow.sh is-initialized >/dev/null 2>&1 || echo 'WARNING: Writing code without active workflow. Consider running /migrate for tracked progress.'",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Edit",
+          "input_contains": ["/src/", "/lib/", "/app/", ".py", ".ts", ".js", ".java", ".go", ".rs"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/enforce-workflow.sh is-initialized >/dev/null 2>&1 || echo 'WARNING: Editing code without active workflow. Consider running /migrate for tracked progress.'",
+            "timeout": 5000
           }
         ]
       }
@@ -50,12 +118,12 @@
         "matcher": {
           "tool_name": "Task",
           "input_contains": ["implementation-auditor"],
-          "output_contains": ["FINAL VERDICT: PASS"]
+          "output_contains": ["FINAL VERDICT: PASS", "VERDICT: PASS"]
         },
         "hooks": [
           {
             "type": "command",
-            "command": "bash scripts/state-machine.sh pass-gate final_audit_passed && bash scripts/state-machine.sh complete-phase final_audit",
+            "command": "bash scripts/state-machine.sh pass-gate final_audit_passed 2>/dev/null && bash scripts/state-machine.sh complete-phase final_audit 2>/dev/null && echo '✓ Final audit PASSED - Testing now allowed'",
             "timeout": 5000
           }
         ]
@@ -64,12 +132,12 @@
         "matcher": {
           "tool_name": "Task",
           "input_contains": ["implementation-auditor"],
-          "output_contains": ["FINAL VERDICT: FAIL"]
+          "output_contains": ["FINAL VERDICT: FAIL", "VERDICT: FAIL"]
         },
         "hooks": [
           {
             "type": "command",
-            "command": "bash scripts/state-machine.sh fail-gate final_audit_passed 'Audit failed' && echo '❌ AUDIT FAILED - Fix all violations before proceeding'",
+            "command": "bash scripts/state-machine.sh set 'gates_passed.final_audit_passed' 'false' 2>/dev/null; echo '❌ AUDIT FAILED - You MUST fix all violations. Testing is BLOCKED until audit passes.'",
             "timeout": 5000
           }
         ]
@@ -78,12 +146,26 @@
         "matcher": {
           "tool_name": "Task",
           "input_contains": ["static-test-runner"],
-          "output_contains": ["Phase 1 Verdict: PASS", "PASS"]
+          "output_contains": ["PASS", "Phase 1 Verdict: PASS", "all tests passed"]
         },
         "hooks": [
           {
             "type": "command",
-            "command": "bash scripts/state-machine.sh pass-gate static_tests_passed && bash scripts/state-machine.sh complete-phase phase1_testing && echo '✓ Phase 1 PASSED - Now run Phase 2 simulation tests (REQUIRED)'",
+            "command": "bash scripts/state-machine.sh pass-gate static_tests_passed 2>/dev/null && bash scripts/state-machine.sh complete-phase phase1_testing 2>/dev/null && bash scripts/enforce-workflow.sh record-evidence static PASS 'Static tests completed' && echo '' && echo '════════════════════════════════════════════════════════════' && echo '  ✓ Phase 1 PASSED' && echo '' && echo '  ⚠️  MANDATORY NEXT STEP: Run Phase 2 simulation tests' && echo '     You CANNOT mark complete without real user tests!' && echo '' && echo '  → Launch: simulation-test-runner' && echo '════════════════════════════════════════════════════════════'",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["static-test-runner"],
+          "output_contains": ["FAIL", "Phase 1 Verdict: FAIL", "tests failed"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/state-machine.sh set 'gates_passed.static_tests_passed' 'false' 2>/dev/null; echo '❌ Phase 1 FAILED - Fix issues before proceeding. Phase 2 is BLOCKED.'",
             "timeout": 5000
           }
         ]
@@ -92,12 +174,26 @@
         "matcher": {
           "tool_name": "Task",
           "input_contains": ["simulation-test-runner"],
-          "output_contains": ["Phase 2 Verdict: PASS", "PASS"]
+          "output_contains": ["PASS", "Phase 2 Verdict: PASS", "simulation passed"]
         },
         "hooks": [
           {
             "type": "command",
-            "command": "bash scripts/state-machine.sh pass-gate simulation_tests_passed && bash scripts/state-machine.sh complete-phase phase2_testing && echo '✓ Phase 2 PASSED - All tests complete'",
+            "command": "bash scripts/state-machine.sh pass-gate simulation_tests_passed 2>/dev/null && bash scripts/state-machine.sh complete-phase phase2_testing 2>/dev/null && bash scripts/enforce-workflow.sh record-evidence simulation PASS 'Real user simulation tests completed' && echo '' && echo '════════════════════════════════════════════════════════════' && echo '  ✓ Phase 2 SIMULATION TESTS PASSED' && echo '' && echo '  All gates cleared. Ready for completion.' && echo '════════════════════════════════════════════════════════════'",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Task",
+          "input_contains": ["simulation-test-runner"],
+          "output_contains": ["FAIL", "Phase 2 Verdict: FAIL", "simulation failed"]
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/state-machine.sh set 'gates_passed.simulation_tests_passed' 'false' 2>/dev/null; echo '❌ Phase 2 SIMULATION FAILED - Real user tests must pass. Completion is BLOCKED.'",
             "timeout": 5000
           }
         ]
@@ -110,7 +206,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash scripts/state-machine.sh complete-phase solid_analysis",
+            "command": "bash scripts/state-machine.sh complete-phase solid_analysis 2>/dev/null",
             "timeout": 5000
           }
         ]
@@ -123,7 +219,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash scripts/state-machine.sh complete-phase migration_planning",
+            "command": "bash scripts/state-machine.sh complete-phase migration_planning 2>/dev/null",
             "timeout": 5000
           }
         ]
@@ -134,18 +230,21 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash scripts/gate-check.sh pre-completion 2>/dev/null || echo '[STOP HOOK] ⚠️ Task stopping - verify all gates passed'",
-            "timeout": 10000
+            "command": "bash scripts/enforce-workflow.sh verify-completion 2>/dev/null || (echo '' && echo '═══════════════════════════════════════════════════════════' && echo '  ⚠️  STOP INTERCEPTED - COMPLETION CHECK FAILED' && echo '═══════════════════════════════════════════════════════════' && echo '' && echo '  This task cannot be marked as complete because:' && echo '  - Simulation tests (Phase 2) may not have been run' && echo '  - Or other required gates are not passed' && echo '' && echo '  REAL USER TESTS ARE MANDATORY before completion.' && echo '' && echo '  To complete properly:' && echo '  1. Ensure /migrate workflow is initialized' && echo '  2. Pass all audit checkpoints' && echo '  3. Run static-test-runner (Phase 1)' && echo '  4. Run simulation-test-runner (Phase 2) ← REQUIRED' && echo '  5. Then mark as complete' && echo '═══════════════════════════════════════════════════════════' && exit 0)",
+            "timeout": 30000
           }
         ]
       }
     ],
-    "Notify": [
+    "Notification": [
       {
+        "matcher": {
+          "type": "progress"
+        },
         "hooks": [
           {
             "type": "command",
-            "command": "bash scripts/state-machine.sh status 2>/dev/null || true",
+            "command": "bash scripts/progress-tracker.sh compact 2>/dev/null || true",
             "timeout": 5000
           }
         ]

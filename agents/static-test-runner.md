@@ -114,3 +114,21 @@ Fix these issues before proceeding to Phase 2 simulation testing.
 2. **No real services** - Mock all external dependencies
 3. **Complete coverage** - Run ALL static checks, not just some
 4. **Clear errors** - Report exact file:line for every failure
+5. **NOT FINAL** - Phase 1 passing does NOT mean testing is complete
+
+---
+
+## ⚠️ IMPORTANT REMINDER
+
+```
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                           ║
+║   Phase 1 PASS ≠ Testing Complete                                         ║
+║                                                                           ║
+║   After Phase 1 passes, Phase 2 (simulation-test-runner) MUST run.        ║
+║   Real service calls are REQUIRED before marking anything as complete.    ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+```
+
+When you report Phase 1 PASS, always remind that Phase 2 is next.
