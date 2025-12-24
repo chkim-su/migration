@@ -30,6 +30,9 @@
         "./agents/static-test-runner.md",
         "./agents/simulation-test-runner.md",
         "./agents/test-orchestrator.md"
+      ],
+      "hooks": [
+        "./hooks/hooks.json"
       ]
     }
   ]
