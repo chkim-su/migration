@@ -227,21 +227,17 @@ Only after audit PASSES:
 
 ```
 Task:
-  agent: test-executor
+  agent: test-orchestrator
   prompt: |
-    Execute two-phase testing.
+    Execute two-phase testing on [target].
 
-    Phase 1: Static Testing
-    - Import validation
-    - Type checking
-    - Linting
-    - Unit tests
-
-    Phase 2: Real User Simulation
-    - Actual build
-    - Real service calls
-    - User journey simulation
-    [If LLM service: Real prompt → Real LLM call → Validate response]
+    The orchestrator will:
+    1. Run static-test-runner (Phase 1)
+       - Import validation, Type checking, Linting, Unit tests
+    2. If Phase 1 passes, run simulation-test-runner (Phase 2)
+       - Actual build, Real service calls, User journey simulation
+       [If LLM service: Real prompt → Real LLM call → Validate response]
+    3. Generate final combined report
 
     BOTH PHASES MUST PASS
 ```

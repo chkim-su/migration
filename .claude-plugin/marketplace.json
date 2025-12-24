@@ -2,7 +2,7 @@
   "name": "strict-migration",
   "displayName": "Strict Migration",
   "description": "Enforces strict implementation standards during refactoring and migration. Prevents dummy code, hardcoding, and scope creep with real user simulation testing.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "chanhokim",
   "license": "MIT",
   "repository": "https://github.com/chanhokim/strict-migration",
@@ -30,9 +30,11 @@
     "./commands/audit.md"
   ],
   "agents": [
-    "./agents/test-executor.md",
     "./agents/solid-analyzer.md",
     "./agents/migration-planner.md",
-    "./agents/implementation-auditor.md"
+    "./agents/implementation-auditor.md",
+    "./agents/static-test-runner.md",
+    "./agents/simulation-test-runner.md",
+    "./agents/test-orchestrator.md"
   ]
 }
